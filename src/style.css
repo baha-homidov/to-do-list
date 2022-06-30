@@ -58,7 +58,8 @@ a {
 }
 
 .sidebar .menu .menu-item:hover,
-.sidebar .menu .menu-item.is-active {
+.sidebar .menu .menu-item.is-active,
+.submit:hover {
     color: #ffffff;
     border: 2px solid #3bba9c;
     background-color: #1e2246;
@@ -67,12 +68,16 @@ a {
 
 
 .content {
+    display: flex;
+    flex-direction: column;
     max-width: 800px;
     flex: 1 1 0;
     padding: 2rem;
-    border: 1px solid red;
+
     margin-left: auto;
     margin-right: auto;
+
+
 }
 
 .content .current-folder {
@@ -85,6 +90,8 @@ a {
     display: flex;
     align-items: center;
     gap: 10px;
+
+    align-self: flex-start;
 }
 
 .add-button {
@@ -214,6 +221,70 @@ a {
 
 
 
+.add-todo {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 20px;
+    border-radius: 20px;
+
+    position: absolute;
+    top: 30%;
+    align-self: center;
+    width: clamp(300px, 35vw, 500px);
+    background-color: #707793;
+    box-shadow: 0px 2px 10px rgba(128, 128, 128, 0.485);
+    transition: 0.2s linear;
+}
+
+
+.add-todo label {
+    margin-bottom: -10px;
+    background-color: none;
+    font-size: 1.4rem;
+    color: #FAFAFB;
+}
+
+.add-todo > input,
+ .add-todo > textarea,
+  .add-todo > select {
+    border: none;
+    outline: none;
+
+    font-size: 1.1rem;
+    border-radius: 10px;
+    padding: 5px;
+    transition: 0.2s linear;
+    border: 2px solid white;
+}
+
+
+
+.add-todo > input:focus,
+.add-todo > textarea:focus,
+.add-todo > select:focus {
+    border: 2px solid #3bba9c;
+}
+
+.submit {
+    padding: 10px;
+    border-radius: 20px;
+    border: 2px solid #2E2F47;
+    color: #FFF;
+    font-size: 1.2rem;
+    transition: 0.2s linear;
+    background-color: #2E2F47;
+}
+
+
+
+
+textarea {
+    resize: none;
+}
+
+
+
 
 
 
@@ -237,6 +308,8 @@ a {
 
 .menu-toggle {
     display: none;
+    position: absolute;
+    z-index: 99;
     position: fixed;
     top: 2rem;
     right: 2rem;
@@ -314,6 +387,7 @@ a {
 
     .content>.title {
         margin-top: -5.6rem;
+    
     }
 
     .sidebar {
