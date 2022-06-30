@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>Asset Management</title>
+  <meta name="viewport" content="width=device-width">
+</head>
+
+<body>
+  <script defer src="bundle.js"></script>
+
+  <div class="app">
+    <div class="menu-toggle">
+      <div class="hamburger">
+        <span></span>
+      </div>
+    </div>
+
+
+  <button class="add-button">
+  </button>
+
+
+
+    <aside class="sidebar">
+      <h3>GOTTA-DO LIST</h3>
+
+      <nav class="menu">
+        <button class="menu-item inbox is-active"><img src="assets/icons/inbox.svg" alt=""><a
+            href="#">Inbox</a></button>
+        <button class="menu-item urgent "><img src="assets/icons/urgent.svg" alt=""><a href="#">Urgent</a></button>
+        <button class="menu-item someday"><img src="assets/icons/someday.svg" alt=""><a href="#">Someday</a></button>
+        <button class="menu-item logbook"><img src="assets/icons/logbook.svg" alt=""><a href="#">Logbook</a></button>
+        <button class="menu-item trash"><img src="assets/icons/trash.svg" alt=""><a href="#">Trash</a></button>
+
+
+      </nav>
+    </aside>
+
+    <main class="content">
+      <div class="title">
+        <img class="icon" src="assets/icons/inbox_big.svg" alt="">
+        <h1 class="folder-title">Inbox</h1>
+      </div>
+
+      <div class="entry-container">
+        <div class="list-entry is-active">
+          <div class="title">Take the Take</div>
+          <div class="description">Loerem ipsum amet dot alot</div>
+          <div class="line"></div>
+          <div class="priority">Priority: Urgent</div>
+          <div class="line"></div>
+          <div class="deadline">Deadline: None</div>
+          <div class="buttons">
+            <button class="check-button big">Mark Complete</button>
+            <button class="delete-button">Delete To-Do</button>
+          </div>
+        </div>
+
+        <div class="list-entry">
+          <button class="check-button"><img src="assets/icons/check_box.svg" alt=""></button>
+          <div class="title">Workout</div>
+        </div>
+        <div class="list-entry">
+          <button class="check-button"><img src="assets/icons/check_box.svg" alt=""></button>
+          <div class="title">Workout</div>
+        </div>
+      </div>
+    </main>
+
+  </div>
+</body>
+
+</html>
