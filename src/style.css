@@ -142,10 +142,6 @@ a {
     background-color: #f4f4f4;
 }
 
-.list-entry.is-active:hover {
-    background-color: #fafafb;
-}
-
 .list-entry>.check-button {
     background-color: #ffffff00;
     padding: 0;
@@ -219,17 +215,20 @@ a {
     background-color: rgba(255, 88, 88, 0.277);
 }
 
-
+.hide {
+    display: none !important;
+}
 
 .add-todo {
     display: flex;
+
     flex-direction: column;
     gap: 15px;
     padding: 20px;
     border-radius: 20px;
 
     position: absolute;
-    top: 30%;
+    top: 20%;
     align-self: center;
     width: clamp(300px, 35vw, 500px);
     background-color: #707793;

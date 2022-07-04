@@ -1,12 +1,9 @@
 import _ from 'lodash';
 import './style.css';
+import { uiManager } from './uiManager';
+import { todoEntry } from './todoClass';
+import { todoManager } from './todoManager'
 
 
-const menuToggle = document.querySelector('.menu-toggle');
-const sidebar = document.querySelector('.sidebar');
+uiManager.addToDo(new todoEntry("DO smth", "safdasfasdf", "Urgent AF", "Tomorrow"));
 
-
-menuToggle.addEventListener('click', () => {
-    menuToggle.classList.toggle('is-active');
-    sidebar.classList.toggle('is-active');
-})
