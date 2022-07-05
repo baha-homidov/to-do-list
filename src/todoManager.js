@@ -3,9 +3,15 @@ import { todoEntry } from './todoClass';
 
 let todoManager = (function () {
     let todoArray = new Array();
-    let folderArray = new Array();
+    // let folderArray = new Array();
+
+
+
+
+
 
     function addTodo(todo) {
+        console.log(todo);
         todoArray.push(todo);
     }
 
@@ -15,7 +21,17 @@ let todoManager = (function () {
     }
 
     
-    return { addTodo, getTodo };
+
+    function changeFolder(newFolder, index) {
+        todoArray[index].priority = newFolder;
+    }
+
+    function getTodoArray() {
+        return todoArray;
+    }
+
+
+    return { addTodo, getTodo, getTodoArray, changeFolder };
 })();
- 
+
 export { todoManager };

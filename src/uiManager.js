@@ -1,4 +1,7 @@
-import todoManager from './todoManager';
+import { todoManager } from './todoManager'
+import { todoEntry } from './todoClass'
+import { add } from 'lodash';
+
 
 
 let uiManager = (function () {
@@ -7,7 +10,62 @@ let uiManager = (function () {
     const sidebar = document.querySelector('.sidebar');
     const entryContainer = document.querySelector('div.entry-container');
     const addTodoButton = document.querySelector('button.add-button');
-    const addTodoWindow = document.querySelector('form.add-todo');
+    const menuItems = document.querySelectorAll('button.menu-item');
+    const submitForm = document.querySelector('form.add-todo');
+    const title = document.querySelector('input#title');
+    const description = document.querySelector('textarea#description');
+    const priority = document.querySelector('select#priority');
+    const deadline = document.querySelector('input#deadline');
+    const pageTitle = document.querySelector('.title > .folder-title');
+    const pageTitleIcon = document.querySelector('.title > .icon');
+
+
+
+    let currentFolder = 'Inbox';
+
+
+    function updateCanvas(folder) {
+        let todoArray = todoManager.getTodoArray();
+        clearCanvas();
+        for (let i = 0; i < todoArray.length; i++) {
+            if (todoArray[i].priority === folder) {
+                addToDo(todoArray[i], i);
+            }
+        }
+    }
+
+    function switchToFolder(folder) {
+        let iconPath;
+        switch (folder) {
+            case 'Inbox':
+                iconPath = 'assets/icons/inbox_big.svg';
+                break;
+            case 'Urgent':
+                iconPath = 'assets/icons/urgent_big.svg';
+                break;
+            case 'Someday':
+                iconPath = 'assets/icons/someday_big.svg';
+                break;
+            case 'Logbook':
+                iconPath = 'assets/icons/logbook_big.svg';
+                break;
+            case 'Trash':
+                iconPath = 'assets/icons/trash_big.svg';
+                break;
+            default:
+                console.log('project');
+                break;
+        }
+        pageTitle.textContent = folder;
+        pageTitleIcon.src = iconPath;
+
+        updateCanvas(folder);
+        
+        menuItems.forEach((button) => {
+            button.classList.remove('is-active')
+        });
+    }
+
 
 
     function init() {
@@ -17,13 +75,32 @@ let uiManager = (function () {
         })
 
         addTodoButton.addEventListener('click', () => {
-            console.log('add');
-            addTodoWindow.classList.toggle('hide');
+            submitForm.classList.toggle('hide');
         })
 
-    }
+        submitForm.addEventListener('submit', (event) => {
+            event.preventDefault(); // stop page form refreshing
+            let newTodo = new todoEntry(title.value, description.value, priority.value, deadline.value);
+            todoManager.addTodo(newTodo);
+            updateCanvas(currentFolder);
+            submitForm.reset();
+            submitForm.classList.toggle('hide');
+        })
 
+        menuItems.forEach((button) => {
+            button.addEventListener('click', () => {
+                switchToFolder(button.getAttribute('folder'));
+                button.classList.toggle('is-active');
+            })
+        })
+
+
+    }
     init();
+
+
+
+
 
     function clearCanvas() {
         let entryContainer = document.querySelector('div.entry-container');
@@ -49,6 +126,11 @@ let uiManager = (function () {
         let buttonImg = document.createElement('img');
         buttonImg.src = "assets/icons/check_box.svg";
         checkButton.appendChild(buttonImg);
+        checkButton.addEventListener('click', (event) => {
+            todoManager.changeFolder('Logbook', index);
+            updateCanvas(currentFolder);
+            event.stopImmediatePropagation();
+        })
         entryElem.appendChild(checkButton);
         entryElem.appendChild(createElement('div', 'title', todo.title));
 
@@ -74,11 +156,11 @@ let uiManager = (function () {
 
             let buttons = createElement('div', 'buttons');
             let checkButton = createElement('button', 'check-button', "Mark Complete");
-            
-            
+
+
             checkButton.addEventListener('click', (event) => {
-                //check todo
-                console.log('check');
+                todoManager.changeFolder('Logbook', index);
+                updateCanvas(currentFolder);
                 event.stopImmediatePropagation();
             })
 
@@ -87,13 +169,14 @@ let uiManager = (function () {
 
             let deleteButton = createElement('button', 'delete-button', "Delete To-Do");
             deleteButton.addEventListener('click', (event) => {
-                //delete todo
-                console.log('delete');
+                todoManager.changeFolder('Trash', index);
+                updateCanvas(currentFolder);
+
                 event.stopImmediatePropagation();
             })
             buttons.appendChild(deleteButton);
-            
-            
+
+
             entryElem.appendChild(buttons);
             event.stopImmediatePropagation(); // stops further event listeners from firing
         })
@@ -111,8 +194,8 @@ let uiManager = (function () {
             let checkButton = createElement('button', 'check-button');
 
             checkButton.addEventListener('click', (event) => {
-                //check todo
-                console.log('check');
+                todoManager.changeFolder('Logbook', index);
+                updateCanvas(currentFolder);
                 event.stopImmediatePropagation();
             })
 
@@ -132,7 +215,7 @@ let uiManager = (function () {
     }
 
 
-    
+
 
 
     return { clearCanvas, addToDo };

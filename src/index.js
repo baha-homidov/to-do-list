@@ -4,6 +4,10 @@ import { uiManager } from './uiManager';
 import { todoEntry } from './todoClass';
 import { todoManager } from './todoManager'
 
+Window.addToDo = () => {
+    console.log('addd');
+}
 
-uiManager.addToDo(new todoEntry("DO smth", "safdasfasdf", "Urgent AF", "Tomorrow"));
+
+
 
