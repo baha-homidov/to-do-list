@@ -1,6 +1,6 @@
 import { todoManager } from './todoManager'
 import { todoEntry } from './todoClass'
-import { add } from 'lodash';
+import { add, forOwn } from 'lodash';
 
 
 
@@ -8,21 +8,36 @@ let uiManager = (function () {
     //cache Dom
     const menuToggle = document.querySelector('.menu-toggle');
     const sidebar = document.querySelector('.sidebar');
+    const menu = document.querySelector('nav.menu');
     const entryContainer = document.querySelector('div.entry-container');
     const addTodoButton = document.querySelector('button.add-button');
-    const menuItems = document.querySelectorAll('button.menu-item');
+    const addFolderButton = document.querySelector('button.add-folder');
+    const addFolderText = document.querySelector('#folder-name');
+    const addFolderForm = document.querySelector('form.add-folder');
+    const submitFolderForm = document.querySelector('form.add-folder');
     const submitForm = document.querySelector('form.add-todo');
+    const editForm = document.querySelector('form.edit-todo');
     const title = document.querySelector('input#title');
     const description = document.querySelector('textarea#description');
     const priority = document.querySelector('select#priority');
     const deadline = document.querySelector('input#deadline');
     const pageTitle = document.querySelector('.title > .folder-title');
     const pageTitleIcon = document.querySelector('.title > .icon');
-
+    let menuItems = document.querySelectorAll('button.menu-item');
 
 
     let currentFolder = 'Inbox';
 
+
+    function updateMenuItemEvents() {
+        menuItems = document.querySelectorAll('button.menu-item');
+        menuItems.forEach((button) => {
+            button.addEventListener('click', () => {
+                switchToFolder(button.getAttribute('folder'));
+                button.classList.toggle('is-active');
+            })
+        })
+    }
 
     function updateCanvas(folder) {
         let todoArray = todoManager.getTodoArray();
@@ -36,6 +51,7 @@ let uiManager = (function () {
 
     function switchToFolder(folder) {
         let iconPath;
+        currentFolder = folder;
         switch (folder) {
             case 'Inbox':
                 iconPath = 'assets/icons/inbox_big.svg';
@@ -53,14 +69,16 @@ let uiManager = (function () {
                 iconPath = 'assets/icons/trash_big.svg';
                 break;
             default:
-                console.log('project');
+                iconPath = 'assets/icons/folder_big.svg'
                 break;
         }
         pageTitle.textContent = folder;
         pageTitleIcon.src = iconPath;
-
         updateCanvas(folder);
-        
+        addTodoButton.classList.remove('hide');
+        if (folder == 'Trash' || folder == 'Logbook') {
+            addTodoButton.classList.add('hide');
+        }
         menuItems.forEach((button) => {
             button.classList.remove('is-active')
         });
@@ -69,6 +87,8 @@ let uiManager = (function () {
 
 
     function init() {
+        updateMenuItemEvents();
+
         menuToggle.addEventListener('click', () => {
             menuToggle.classList.toggle('is-active');
             sidebar.classList.toggle('is-active');
@@ -80,27 +100,37 @@ let uiManager = (function () {
 
         submitForm.addEventListener('submit', (event) => {
             event.preventDefault(); // stop page form refreshing
-            let newTodo = new todoEntry(title.value, description.value, priority.value, deadline.value);
+            let newTodo = new todoEntry(title.value, description.value, currentFolder, deadline.value);
             todoManager.addTodo(newTodo);
             updateCanvas(currentFolder);
             submitForm.reset();
             submitForm.classList.toggle('hide');
         })
 
-        menuItems.forEach((button) => {
-            button.addEventListener('click', () => {
-                switchToFolder(button.getAttribute('folder'));
-                button.classList.toggle('is-active');
-            })
+        submitFolderForm.addEventListener('submit', (event) => {
+            event.preventDefault(); // stop page from refreshing
+            const newFolder = createElement('button', 'menu-item');
+            newFolder.setAttribute('folder', addFolderText.value);
+            const icon = createElement('img');
+            icon.src = 'assets/icons/folder.svg';
+            newFolder.appendChild(icon);
+            newFolder.appendChild(document.createTextNode(addFolderText.value));
+            
+
+            menu.insertBefore(newFolder, addFolderButton);
+            submitFolderForm.reset();
+            submitFolderForm.classList.toggle('hide');
+            updateMenuItemEvents();
+        });
+
+
+        addFolderButton.addEventListener('click', () => {
+            addFolderForm.classList.toggle('hide');
         })
 
 
     }
     init();
-
-
-
-
 
     function clearCanvas() {
         let entryContainer = document.querySelector('div.entry-container');
@@ -109,14 +139,18 @@ let uiManager = (function () {
 
 
 
+
+    function createElement(type, className, textContent) {
+        let element = document.createElement(type);
+        if (className) { element.classList.add(className); }
+        if (textContent) { element.textContent = textContent; }
+        return element;
+    }
+
+
+
     function makeEntryElem(todo, index) {
 
-        function createElement(type, className, textContent) {
-            let element = document.createElement(type);
-            if (className) { element.classList.add(className); }
-            if (textContent) { element.textContent = textContent; }
-            return element;
-        }
 
         let entryElem = createElement('div', 'list-entry');
         entryElem.classList.add('target');
@@ -166,6 +200,14 @@ let uiManager = (function () {
 
 
             buttons.appendChild(checkButton);
+
+            let editButton = createElement('button', 'edit-button', 'Edit');
+            editButton.addEventListener('click', () => {
+                editForm.classList.toggle('hide');
+            })
+
+            buttons.appendChild(editButton);
+
 
             let deleteButton = createElement('button', 'delete-button', "Delete To-Do");
             deleteButton.addEventListener('click', (event) => {
