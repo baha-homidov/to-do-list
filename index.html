@@ -27,13 +27,18 @@
       <h3>GOTTA-DO LIST</h3>
 
       <nav class="menu">
-        <button class="menu-item inbox is-active" folder="Inbox"><img src="assets/icons/inbox.svg" alt=""><a
-            href="#">Inbox</a></button>
-        <button class="menu-item urgent" folder="Urgent"><img src="assets/icons/urgent.svg" alt=""><a href="#">Urgent</a></button>
-        <button class="menu-item someday" folder="Someday"><img src="assets/icons/someday.svg" alt=""><a href="#">Someday</a></button>
+        <button class="menu-item inbox is-active" folder="Inbox"><img src="assets/icons/inbox.svg" alt="">
+        Inbox</button>
+        <button class="menu-item urgent" folder="Urgent"><img src="assets/icons/urgent.svg" alt="">Urgent</button>
+        <button class="menu-item someday" folder="Someday"><img src="assets/icons/someday.svg" alt="">Someday</button>
+        <button class="add-folder"><img src="assets/icons/add.svg" alt=""> Add Folder</button>
+        <form class="add-folder" type="submit">
+          <input type="text" name="folder-name" id="folder-name" placeholder="Folder name" required>
+          <button class="submit-folder" type="submit">+</button>
+        </form>
         <button class="menu-item logbook" folder="Logbook"><img src="assets/icons/logbook.svg" alt=""><a href="#">Logbook</a></button>
         <button class="menu-item trash" folder="Trash"><img src="assets/icons/trash.svg" alt=""><a href="#">Trash</a></button>
-
+        
 
       </nav>
     </aside>
@@ -52,17 +57,23 @@
         <label for="description">Description</label>
         <textarea name="description" id="description" rows="5"></textarea>
         
-        <label for="priority">Priority</label>
-        <select name="priority" id="priority">
-          <option value="Inbox">Inbox</option>
-          <option value="Urgent">Urgent</option>
-          <option value="Someday">Someday</option>
-        </select>
-
         <label for="deadline">Deadline</label>
         <input type="date" id="deadline" name="deadline">
         
         <button type="submit" class="submit-todo">Add To-Do</button>
+      </form>
+
+      <form class="edit-todo hide" type="submit" >
+        <label for="title">Title</label>
+        <input type="text" name="title" id="title" required>
+        
+        <label for="description">Description</label>
+        <textarea name="description" id="description" rows="5"></textarea>
+        
+        <label for="deadline">Deadline</label>
+        <input type="date" id="deadline" name="deadline">
+        
+        <button type="submit" class="submit-edit">Edit To-Do</button>
       </form>
 
 
