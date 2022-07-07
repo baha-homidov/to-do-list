@@ -15,6 +15,9 @@ let todoManager = (function () {
         todoArray.push(todo);
     }
 
+    function editTodo(newTodo, index) {
+        todoArray[index] = newTodo;
+    }
 
     function getTodo(index) {
         return todoArray[index];
@@ -31,7 +34,7 @@ let todoManager = (function () {
     }
 
 
-    return { addTodo, getTodo, getTodoArray, changeFolder };
+    return { addTodo, getTodo, getTodoArray, changeFolder, editTodo };
 })();
 
 export { todoManager };

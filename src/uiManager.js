@@ -1,7 +1,7 @@
 import { todoManager } from './todoManager'
 import { todoEntry } from './todoClass'
 import { add, forOwn } from 'lodash';
-
+import { format, formatISO, parseISO } from 'date-fns';
 
 
 let uiManager = (function () {
@@ -17,6 +17,11 @@ let uiManager = (function () {
     const submitFolderForm = document.querySelector('form.add-folder');
     const submitForm = document.querySelector('form.add-todo');
     const editForm = document.querySelector('form.edit-todo');
+    let editFormTitle = document.querySelector('form.edit-todo>#title');
+    let editFormDescription = document.querySelector('form.edit-todo>#description');
+    let editFormDeadline = document.querySelector('form.edit-todo>#deadline');
+    let editIndex;
+
     const title = document.querySelector('input#title');
     const description = document.querySelector('textarea#description');
     const priority = document.querySelector('select#priority');
@@ -44,6 +49,7 @@ let uiManager = (function () {
         clearCanvas();
         for (let i = 0; i < todoArray.length; i++) {
             if (todoArray[i].priority === folder) {
+                
                 addToDo(todoArray[i], i);
             }
         }
@@ -106,6 +112,19 @@ let uiManager = (function () {
             submitForm.reset();
             submitForm.classList.toggle('hide');
         })
+
+        editForm.addEventListener('submit', (event) => {
+            event.preventDefault(); // stop page from refreshing
+            let newTodo = new todoEntry(editFormTitle.value, editFormDescription.value, currentFolder, editFormDeadline.value);
+            todoManager.editTodo(newTodo, editIndex);
+            updateCanvas(currentFolder);
+            editForm.reset();
+            editForm.classList.toggle('hide');
+            console.log("edited");
+        })
+
+
+
 
         submitFolderForm.addEventListener('submit', (event) => {
             event.preventDefault(); // stop page from refreshing
@@ -186,7 +205,10 @@ let uiManager = (function () {
             entryElem.appendChild(createElement('div', 'line'));
             entryElem.appendChild(createElement('div', 'priority', `Priority: ${todo.priority}`));
             entryElem.appendChild(createElement('div', 'line'));
-            entryElem.appendChild(createElement('div', 'deadline', `Deadline: ${todo.deadline}`));
+            let formattedDate = '';
+            if (todo.deadline) { formattedDate = format(parseISO(todo.deadline), 'MMMM do yyyy'); };
+            entryElem.appendChild(createElement('div', 'deadline', `Deadline: ${formattedDate}`));
+
 
             let buttons = createElement('div', 'buttons');
             let checkButton = createElement('button', 'check-button', "Mark Complete");
@@ -204,9 +226,14 @@ let uiManager = (function () {
             let editButton = createElement('button', 'edit-button', 'Edit');
             editButton.addEventListener('click', () => {
                 editForm.classList.toggle('hide');
+                editFormTitle.value = todo.title;
+                editFormDescription.value = todo.description;
+                console.log(todo.deadline);
+                editFormDeadline.value = todo.deadline;
+                editIndex = index;
             })
-
             buttons.appendChild(editButton);
+
 
 
             let deleteButton = createElement('button', 'delete-button', "Delete To-Do");
