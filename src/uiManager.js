@@ -1,8 +1,10 @@
+/* eslint-disable no-shadow */
+/* eslint-disable new-cap */
 /* eslint-disable no-use-before-define */
 import { format, parseISO } from "date-fns";
 // eslint-disable-next-line import/no-cycle
-import { todoManager } from "./todoManager";
-import { todoEntry } from "./todoClass";
+import todoManager from "./todoManager";
+import todoEntry from "./todoClass";
 // import { add, forOwn } from "lodash";
 
 const uiManager = (function uiManager() {
@@ -104,7 +106,8 @@ const uiManager = (function uiManager() {
 
     submitForm.addEventListener("submit", (event) => {
       event.preventDefault(); // stop page form refreshing
-      let newTodo = new todoEntry(
+      // eslint-disable-next-line new-cap
+      const newTodo = new todoEntry(
         title.value,
         description.value,
         currentFolder,
@@ -118,7 +121,7 @@ const uiManager = (function uiManager() {
 
     editForm.addEventListener("submit", (event) => {
       event.preventDefault(); // stop page from refreshing
-      let newTodo = new todoEntry(
+      const newTodo = new todoEntry(
         editFormTitle.value,
         editFormDescription.value,
         currentFolder,
@@ -153,12 +156,13 @@ const uiManager = (function uiManager() {
   init();
 
   function clearCanvas() {
-    let entryContainer = document.querySelector("div.entry-container");
+    // eslint-disable-next-line no-shadow
+    const entryContainer = document.querySelector("div.entry-container");
     entryContainer.textContent = "";
   }
 
   function createElement(type, className, textContent) {
-    let element = document.createElement(type);
+    const element = document.createElement(type);
     if (className) {
       element.classList.add(className);
     }
@@ -169,12 +173,12 @@ const uiManager = (function uiManager() {
   }
 
   function makeEntryElem(todo, index) {
-    let entryElem = createElement("div", "list-entry");
+    const entryElem = createElement("div", "list-entry");
     entryElem.classList.add("target");
     entryElem.setAttribute("array-index", index);
 
-    let checkButton = createElement("button", "check-button");
-    let buttonImg = document.createElement("img");
+    const checkButton = createElement("button", "check-button");
+    const buttonImg = document.createElement("img");
     buttonImg.src = "assets/icons/check_box.svg";
     checkButton.appendChild(buttonImg);
     checkButton.addEventListener("click", (event) => {
@@ -210,13 +214,15 @@ const uiManager = (function uiManager() {
         createElement("div", "deadline", `Deadline: ${formattedDate}`)
       );
 
-      let buttons = createElement("div", "buttons");
-      let checkButton = createElement(
+      const buttons = createElement("div", "buttons");
+      // eslint-disable-next-line no-shadow
+      const checkButton = createElement(
         "button",
         "check-button",
         "Mark Complete"
       );
 
+      // eslint-disable-next-line no-shadow
       checkButton.addEventListener("click", (event) => {
         todoManager.changeFolder("Logbook", index);
         updateCanvas(currentFolder);
@@ -225,7 +231,7 @@ const uiManager = (function uiManager() {
 
       buttons.appendChild(checkButton);
 
-      let editButton = createElement("button", "edit-button", "Edit");
+      const editButton = createElement("button", "edit-button", "Edit");
       editButton.addEventListener("click", () => {
         editForm.classList.toggle("hide");
         editFormTitle.value = todo.title;
@@ -236,7 +242,7 @@ const uiManager = (function uiManager() {
       });
       buttons.appendChild(editButton);
 
-      let deleteButton = createElement(
+      const deleteButton = createElement(
         "button",
         "delete-button",
         "Delete To-Do"
@@ -261,7 +267,7 @@ const uiManager = (function uiManager() {
       entryElem.textContent = "";
       entryElem.classList.toggle("is-active");
 
-      let checkButton = createElement("button", "check-button");
+      const checkButton = createElement("button", "check-button");
 
       checkButton.addEventListener("click", (event) => {
         todoManager.changeFolder("Logbook", index);
@@ -269,7 +275,7 @@ const uiManager = (function uiManager() {
         event.stopImmediatePropagation();
       });
 
-      let buttonImg = document.createElement("img");
+      const buttonImg = document.createElement("img");
       buttonImg.src = "assets/icons/check_box.svg";
       checkButton.appendChild(buttonImg);
       entryElem.appendChild(checkButton);
@@ -286,4 +292,4 @@ const uiManager = (function uiManager() {
   return { clearCanvas, addToDo };
 })();
 
-export { uiManager };
+export default uiManager;

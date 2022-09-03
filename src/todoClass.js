@@ -7,4 +7,4 @@ class todoEntry {
   }
 }
 
-export { todoEntry };
+export default todoEntry;

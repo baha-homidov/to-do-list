@@ -1,8 +1,8 @@
-import { uiManager } from "./uiManager";
-import { todoEntry } from "./todoClass";
+// import { uiManager } from "./uiManager";
+// import { todoEntry } from "./todoClass";
 
-const todoManager = (function () {
-  let todoArray = new Array();
+const todoManager = (function todoManager() {
+  const todoArray = [];
   // let folderArray = new Array();
 
   function addTodo(todo) {
@@ -29,4 +29,4 @@ const todoManager = (function () {
   return { addTodo, getTodo, getTodoArray, changeFolder, editTodo };
 })();
 
-export { todoManager };
+export default todoManager;
