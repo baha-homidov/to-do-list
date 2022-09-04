@@ -1,8 +1,8 @@
+/* eslint-disable import/no-cycle */
 /* eslint-disable no-shadow */
 /* eslint-disable new-cap */
 /* eslint-disable no-use-before-define */
 import { format, parseISO } from "date-fns";
-// eslint-disable-next-line import/no-cycle
 import todoManager from "./todoManager";
 import todoEntry from "./todoClass";
 import { signIn } from "./firebaseBackend";
@@ -295,8 +295,14 @@ function addToDo(todo, index) {
   entryContainer.appendChild(makeEntryElem(todo, index));
 }
 
-export default function updateGreeting(username) {
+function updateGreeting(username) {
   usernameGreeting.textContent = `Hi, ${username}!`;
 }
 
+function hideSignInButton() {
+  signInButton.classList.add("hide");
+}
+
+
+export { updateGreeting, hideSignInButton };
 

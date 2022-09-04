@@ -1,3 +1,4 @@
+/* eslint-disable import/no-cycle */
 /* eslint-disable import/no-duplicates */
 
 /* firestore imports */
@@ -10,10 +11,11 @@ import {
   getAuth,
   onAuthStateChanged,
   GoogleAuthProvider,
+
   signInWithPopup,
   signOut,
 } from "firebase/auth";
-import updateGreeting from "./uiManager";
+import { updateGreeting, hideSignInButton } from "./uiManager";
 
 // My web app's Firebase configuration
 const firebaseConfig = {
@@ -33,6 +35,7 @@ async function signIn() {
   // Sign in Firebase using popup auth and Google as the identity provider.
   const provider = new GoogleAuthProvider();
   await signInWithPopup(getAuth(), provider);
+  hideSignInButton();
 }
 
 // async function addData() {
@@ -47,6 +50,16 @@ async function signIn() {
 //     console.error("Error adding document: ", e);
 //   }
 // }
-updateGreeting("Abdu");
+updateGreeting("Abdue");
+
+function authStateObserver(user) {
+  if (user) {
+    // User is signed in!
+    // Get the signed-in user's and name.
+    const username = getUserName();
+    updateGreeting(username);
+  }
+}
+
 
 export { signIn, db };
