@@ -1,5 +1,3 @@
-// import { uiManager } from "./uiManager";
-// import { todoEntry } from "./todoClass";
 
 const todoManager = (function todoManager() {
   const todoArray = [];

@@ -13,7 +13,7 @@ import {
   signInWithPopup,
   signOut,
 } from "firebase/auth";
-import uiManager from "./uiManager";
+import updateGreeting from "./uiManager";
 
 // My web app's Firebase configuration
 const firebaseConfig = {
@@ -47,6 +47,6 @@ async function signIn() {
 //     console.error("Error adding document: ", e);
 //   }
 // }
-uiManager.updateGreeting("Abdu");
+updateGreeting("Abdu");
 
 export { signIn, db };
