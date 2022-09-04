@@ -5,7 +5,7 @@ import { format, parseISO } from "date-fns";
 // eslint-disable-next-line import/no-cycle
 import todoManager from "./todoManager";
 import todoEntry from "./todoClass";
-// import { add, forOwn } from "lodash";
+
 
 const uiManager = (function uiManager() {
   // cache Dom
@@ -32,6 +32,8 @@ const uiManager = (function uiManager() {
   const deadline = document.querySelector("input#deadline");
   const pageTitle = document.querySelector(".title > .folder-title");
   const pageTitleIcon = document.querySelector(".title > .icon");
+  const signInButton = document.querySelector("button.sign-in");
+  const usernameGreeting = document.querySelector("h2.greeting");
   let menuItems = document.querySelectorAll("button.menu-item");
 
   let currentFolder = "Inbox";
@@ -94,6 +96,10 @@ const uiManager = (function uiManager() {
 
   function init() {
     updateMenuItemEvents();
+
+    signInButton.addEventListener("click", () => {
+      firebaseBackend.singIn();
+    })
 
     menuToggle.addEventListener("click", () => {
       menuToggle.classList.toggle("is-active");
@@ -289,7 +295,11 @@ const uiManager = (function uiManager() {
     entryContainer.appendChild(makeEntryElem(todo, index));
   }
 
-  return { clearCanvas, addToDo };
+  function updateGreeting(username) {
+    usernameGreeting.textContent = `Hi, ${username}!`;
+  }
+
+  return { clearCanvas, addToDo, updateGreeting };
 })();
 
 export default uiManager;

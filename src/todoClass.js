@@ -7,4 +7,5 @@ class todoEntry {
   }
 }
 
+
 export default todoEntry;

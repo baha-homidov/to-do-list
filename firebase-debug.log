@@ -1,0 +1,40 @@
+[debug] [2022-09-03T09:09:40.433Z] ----------------------------------------------------------------------
+[debug] [2022-09-03T09:09:40.435Z] Command:       /Users/mac/.nvm/versions/node/v16.15.0/bin/node /Users/mac/.nvm/versions/node/v16.15.0/bin/firebase login --reauth
+[debug] [2022-09-03T09:09:40.435Z] CLI Version:   11.8.0
+[debug] [2022-09-03T09:09:40.436Z] Platform:      darwin
+[debug] [2022-09-03T09:09:40.436Z] Node Version:  v16.15.0
+[debug] [2022-09-03T09:09:40.437Z] Time:          Sat Sep 03 2022 17:09:40 GMT+0800 (China Standard Time)
+[debug] [2022-09-03T09:09:40.437Z] ----------------------------------------------------------------------
+[debug] 
+[info] 
+[info] Visit this URL on this device to log in:
+[info] https://accounts.google.com/o/oauth2/auth?client_id=563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com&scope=email%20openid%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcloudplatformprojects.readonly%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Ffirebase%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcloud-platform&response_type=code&state=826786781&redirect_uri=http%3A%2F%2Flocalhost%3A9005&login_hint=khamidov.mirzo%40gmail.com
+[info] 
+[info] Waiting for authentication...
+[debug] [2022-09-03T09:09:55.248Z] >>> [apiv2][query] POST https://accounts.google.com/o/oauth2/token [none]
+[debug] [2022-09-03T09:09:55.249Z] >>> [apiv2][body] POST https://accounts.google.com/o/oauth2/token [omitted]
+[debug] [2022-09-03T09:10:38.657Z] ----------------------------------------------------------------------
+[debug] [2022-09-03T09:10:38.658Z] Command:       /Users/mac/.nvm/versions/node/v16.15.0/bin/node /Users/mac/.nvm/versions/node/v16.15.0/bin/firebase login --reauth
+[debug] [2022-09-03T09:10:38.659Z] CLI Version:   11.8.0
+[debug] [2022-09-03T09:10:38.659Z] Platform:      darwin
+[debug] [2022-09-03T09:10:38.659Z] Node Version:  v16.15.0
+[debug] [2022-09-03T09:10:38.660Z] Time:          Sat Sep 03 2022 17:10:38 GMT+0800 (China Standard Time)
+[debug] [2022-09-03T09:10:38.661Z] ----------------------------------------------------------------------
+[debug] 
+[info] 
+[info] Visit this URL on this device to log in:
+[info] https://accounts.google.com/o/oauth2/auth?client_id=563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com&scope=email%20openid%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcloudplatformprojects.readonly%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Ffirebase%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcloud-platform&response_type=code&state=914197243&redirect_uri=http%3A%2F%2Flocalhost%3A9005&login_hint=khamidov.mirzo%40gmail.com
+[info] 
+[info] Waiting for authentication...
+[debug] [2022-09-03T09:10:44.816Z] >>> [apiv2][query] POST https://accounts.google.com/o/oauth2/token [none]
+[debug] [2022-09-03T09:10:44.816Z] >>> [apiv2][body] POST https://accounts.google.com/o/oauth2/token [omitted]
+[debug] [2022-09-03T09:10:45.656Z] <<< [apiv2][status] POST https://accounts.google.com/o/oauth2/token 200
+[debug] [2022-09-03T09:10:45.656Z] <<< [apiv2][body] POST https://accounts.google.com/o/oauth2/token [omitted]
+[info] 
+[info] ✔  Success! Logged in as khamidov.mirzo@gmail.com 
+[debug] [2022-09-03T09:10:55.748Z] Error: Timed out.
+    at Timeout._onTimeout (/Users/mac/.nvm/versions/node/v16.15.0/lib/node_modules/firebase-tools/lib/utils.js:253:49)
+    at listOnTimeout (node:internal/timers:559:17)
+    at processTimers (node:internal/timers:502:7)
+[error] 
+[error] Error: An unexpected error has occurred.

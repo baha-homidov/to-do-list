@@ -21,7 +21,9 @@ body {
     padding: 2rem 1rem;
     background-color: #2e3047;
 }
-
+.greeting {
+    color: white;
+}
 .sidebar h3 {
     color: #707793;
     font-size: 0.75rem;
