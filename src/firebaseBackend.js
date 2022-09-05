@@ -32,6 +32,7 @@ import {
   showSignOutbutton,
   hideSignOutButton,
 } from "./uiManager";
+import ca from "date-fns/esm/locale/ca/index.js";
 
 // My web app's Firebase configuration
 const firebaseConfig = {
@@ -55,7 +56,7 @@ async function signInUser() {
   refreshUi();
   const auth = getAuth();
   const user = auth.currentUser;
-  addUser(user.uid);
+  initUser(user.uid);
 }
 
 function signOutUser() {
@@ -96,8 +97,18 @@ function initFireBaseAuth() {
 
 initFireBaseAuth();
 
-async function addUser(userToken) {
-  // add an entry for a new user
+async function addFolder(userToken, folderName) {
+  try {
+    await setDoc(doc(db, "users", userToken, "folders", folderName), {});
+    console.log(`Folder ${folderName} added successfully`);
+  } catch (e) {
+    console.log(`Error adding folder: ${e}`);
+  }
+}
+
+async function initUser(userToken) {
+  // add an entry for a new user and initialize default folders
+
   try {
     // check if user already exists
     const docRef = doc(db, "users", userToken);
@@ -109,6 +120,11 @@ async function addUser(userToken) {
 
     // if user doesn't exist add a new user
     await setDoc(doc(db, "users", userToken), {});
+    addFolder(userToken, "Inbox");
+    addFolder(userToken, "Urgent");
+    addFolder(userToken, "Someday");
+    addFolder(userToken, "Logbook");
+    addFolder(userToken, "Trash");
     console.log("user added successfully");
   } catch (e) {
     console.log("Error: ", e);
