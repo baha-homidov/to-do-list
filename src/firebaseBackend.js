@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 /* eslint-disable import/no-cycle */
 /* eslint-disable import/no-duplicates */
 
@@ -5,17 +6,32 @@
 // required libraries to initialize firestore
 import { initializeApp } from "firebase/app";
 // required libraries for firestore
-import { getFirestore, collection, addDoc } from "firebase/firestore";
+import {
+  doc,
+  getFirestore,
+  collection,
+  addDoc,
+  getDoc,
+  setDoc,
+} from "firebase/firestore";
 // required libraries for firestore auth
 import {
   getAuth,
   onAuthStateChanged,
   GoogleAuthProvider,
-
   signInWithPopup,
   signOut,
 } from "firebase/auth";
-import { updateGreeting, hideSignInButton } from "./uiManager";
+import {
+  updateGreeting,
+  showGreeting,
+  hideGreeting,
+  hideSignInButton,
+  showSignInbutton,
+  refreshUi,
+  showSignOutbutton,
+  hideSignOutButton,
+} from "./uiManager";
 
 // My web app's Firebase configuration
 const firebaseConfig = {
@@ -31,12 +47,75 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-async function signIn() {
+async function signInUser() {
   // Sign in Firebase using popup auth and Google as the identity provider.
   const provider = new GoogleAuthProvider();
   await signInWithPopup(getAuth(), provider);
-  hideSignInButton();
+  // eslint-disable-next-line no-restricted-globals
+  refreshUi();
+  const auth = getAuth();
+  const user = auth.currentUser;
+  addUser(user.uid);
 }
+
+function signOutUser() {
+  // Sign out of Firebase
+  signOut(getAuth());
+  // eslint-disable-next-line no-restricted-globals
+  location.reload();
+}
+
+function getUsername() {
+  return getAuth().currentUser.displayName;
+}
+
+function authStateObserver(user) {
+  if (user) {
+    // User is signed in!
+
+    const username = getUsername();
+    updateGreeting(username);
+    showGreeting();
+    hideSignInButton();
+    showSignOutbutton();
+    refreshUi();
+  } else {
+    // User is signed out!
+    updateGreeting("");
+    showSignInbutton();
+    hideGreeting();
+    hideSignOutButton();
+    refreshUi();
+  }
+}
+
+function initFireBaseAuth() {
+  // Listen to auth state changes
+  onAuthStateChanged(getAuth(), authStateObserver);
+}
+
+initFireBaseAuth();
+
+async function addUser(userToken) {
+  // add an entry for a new user
+  try {
+    // check if user already exists
+    const docRef = doc(db, "users", userToken);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      console.log(`user ${userToken} already exists`);
+      return;
+    }
+
+    // if user doesn't exist add a new user
+    await setDoc(doc(db, "users", userToken), {});
+    console.log("user added successfully");
+  } catch (e) {
+    console.log("Error: ", e);
+  }
+}
+
+export { signInUser, signOutUser, db };
 
 // async function addData() {
 //   try {
@@ -50,16 +129,3 @@ async function signIn() {
 //     console.error("Error adding document: ", e);
 //   }
 // }
-updateGreeting("Abdue");
-
-function authStateObserver(user) {
-  if (user) {
-    // User is signed in!
-    // Get the signed-in user's and name.
-    const username = getUserName();
-    updateGreeting(username);
-  }
-}
-
-
-export { signIn, db };

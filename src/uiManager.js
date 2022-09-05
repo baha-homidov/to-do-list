@@ -5,8 +5,7 @@
 import { format, parseISO } from "date-fns";
 import todoManager from "./todoManager";
 import todoEntry from "./todoClass";
-import { signIn } from "./firebaseBackend";
-
+import { signInUser, signOutUser } from "./firebaseBackend";
 
 // cache Dom
 const menuToggle = document.querySelector(".menu-toggle");
@@ -33,6 +32,7 @@ const deadline = document.querySelector("input#deadline");
 const pageTitle = document.querySelector(".title > .folder-title");
 const pageTitleIcon = document.querySelector(".title > .icon");
 const signInButton = document.querySelector("button.sign-in");
+const signOutButton = document.querySelector("button.sign-out");
 const usernameGreeting = document.querySelector("h2.greeting");
 let menuItems = document.querySelectorAll("button.menu-item");
 
@@ -98,8 +98,13 @@ function init() {
   updateMenuItemEvents();
 
   signInButton.addEventListener("click", () => {
-    signIn();
-  })
+    signInUser();
+  });
+  signOutButton.addEventListener("click", () => {
+    signOutUser();
+  });
+
+
 
   menuToggle.addEventListener("click", () => {
     menuToggle.classList.toggle("is-active");
@@ -296,13 +301,49 @@ function addToDo(todo, index) {
 }
 
 function updateGreeting(username) {
-  usernameGreeting.textContent = `Hi, ${username}!`;
+  if (username === "") {
+    usernameGreeting.textContent = "Hi!";
+  } else {
+    usernameGreeting.textContent = `Hi, ${username}!`;
+  }
+}
+
+function hideGreeting() {
+  usernameGreeting.classList.add("hide");
+}
+
+function showGreeting() {
+  usernameGreeting.classList.remove("hide");
 }
 
 function hideSignInButton() {
   signInButton.classList.add("hide");
 }
 
+function showSignInbutton() {
+  signInButton.classList.remove("hide");
+}
 
-export { updateGreeting, hideSignInButton };
+function hideSignOutButton() {
+  signOutButton.classList.add("hide");
+}
 
+function showSignOutbutton() {
+  signOutButton.classList.remove("hide");
+}
+
+function refreshUi() {
+  switchToFolder("Inbox");
+}
+
+
+export {
+  updateGreeting,
+  hideSignInButton,
+  showSignInbutton,
+  hideSignOutButton,
+  showSignOutbutton,
+  hideGreeting,
+  showGreeting,
+  refreshUi,
+};

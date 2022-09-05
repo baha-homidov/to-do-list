@@ -1,93 +1,101 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Gotta-Do List</title>
+    <meta name="viewport" content="width=device-width" />
+  </head>
 
-<head>
-  <meta charset="utf-8" />
-  <title>Gotta-Do List</title>
-  <meta name="viewport" content="width=device-width">
-</head>
+  <body>
+    <script defer src="bundle.js"></script>
 
-<body>
-  <script defer src="bundle.js"></script>
-
-  <div class="app">
-    <div class="menu-toggle">
-      <div class="hamburger">
-        <span></span>
+    <div class="app">
+      <div class="menu-toggle">
+        <div class="hamburger">
+          <span></span>
+        </div>
       </div>
-    </div>
 
+      <button class="add-button"></button>
 
-    <button class="add-button">
-    </button>
+      <aside class="sidebar">
+        <button class="menu-item sign-in">
+          <img class="small-icon" src="assets/icons/google.svg" alt="" />Sign
+          in with Google
+        </button>
+        <h2 class="greeting hide">Hi!</h2>
+        <h3>GOTTA-DO LIST</h3>
 
+        <nav class="menu">
+          <button class="menu-item inbox is-active" folder="Inbox">
+            <img src="assets/icons/inbox.svg" alt="" /> Inbox
+          </button>
+          <button class="menu-item urgent" folder="Urgent">
+            <img src="assets/icons/urgent.svg" alt="" />Urgent
+          </button>
+          <button class="menu-item someday" folder="Someday">
+            <img src="assets/icons/someday.svg" alt="" />Someday
+          </button>
+          <button class="add-folder">
+            <img src="assets/icons/add.svg" alt="" /> Add Folder
+          </button>
+          <form class="add-folder" type="submit">
+            <input
+              type="text"
+              name="folder-name"
+              id="folder-name"
+              placeholder="Folder name"
+              required
+            />
+            <button class="submit-folder" type="submit">+</button>
+          </form>
+          <button class="menu-item logbook" folder="Logbook">
+            <img src="assets/icons/logbook.svg" alt="" /><a href="#">Logbook</a>
+          </button>
+          <button class="menu-item trash" folder="Trash">
+            <img src="assets/icons/trash.svg" alt="" /><a href="#">Trash</a>
+          </button>
+          <button class="menu-item sign-out">
+            <img class="small-icon" src="assets/icons/sign-out.svg" alt="asdf" />
+            Sign out
+          </button>
+        </nav>
+      </aside>
 
+      <main class="content">
+        <div class="title">
+          <img class="icon" src="assets/icons/inbox_big.svg" alt="" />
+          <h1 class="folder-title">Inbox</h1>
+        </div>
 
-    <aside class="sidebar">
-      <button class="sign-in">Sign in with Google</button>
-      <h2 class="greeting">Hi!</h2>
-      <h3>GOTTA-DO LIST</h3>
+        <form class="add-todo hide" type="submit">
+          <label for="title">Title</label>
+          <input type="text" name="title" id="title" required />
 
-      <nav class="menu">
-        <button class="menu-item inbox is-active" folder="Inbox"><img src="assets/icons/inbox.svg" alt="">
-        Inbox</button>
-        <button class="menu-item urgent" folder="Urgent"><img src="assets/icons/urgent.svg" alt="">Urgent</button>
-        <button class="menu-item someday" folder="Someday"><img src="assets/icons/someday.svg" alt="">Someday</button>
-        <button class="add-folder"><img src="assets/icons/add.svg" alt=""> Add Folder</button>
-        <form class="add-folder" type="submit">
-          <input type="text" name="folder-name" id="folder-name" placeholder="Folder name" required>
-          <button class="submit-folder" type="submit">+</button>
+          <label for="description">Description</label>
+          <textarea name="description" id="description" rows="5"></textarea>
+
+          <label for="deadline">Deadline</label>
+          <input type="date" id="deadline" name="deadline" />
+
+          <button type="submit" class="submit-todo">Add To-Do</button>
         </form>
-        <button class="menu-item logbook" folder="Logbook"><img src="assets/icons/logbook.svg" alt=""><a href="#">Logbook</a></button>
-        <button class="menu-item trash" folder="Trash"><img src="assets/icons/trash.svg" alt=""><a href="#">Trash</a></button>
-        
 
-      </nav>
-    </aside>
+        <form class="edit-todo hide" type="submit">
+          <label for="title">Title</label>
+          <input type="text" name="title" id="title" required />
 
-    <main class="content">
-      <div class="title">
-        <img class="icon" src="assets/icons/inbox_big.svg" alt="">
-        <h1 class="folder-title">Inbox</h1>
-      </div>
+          <label for="description">Description</label>
+          <textarea name="description" id="description" rows="5"></textarea>
 
+          <label for="deadline">Deadline</label>
+          <input type="date" id="deadline" name="deadline" />
 
-      <form class="add-todo hide" type="submit" >
-        <label for="title">Title</label>
-        <input type="text" name="title" id="title" required>
-        
-        <label for="description">Description</label>
-        <textarea name="description" id="description" rows="5"></textarea>
-        
-        <label for="deadline">Deadline</label>
-        <input type="date" id="deadline" name="deadline">
-        
-        <button type="submit" class="submit-todo">Add To-Do</button>
-      </form>
+          <button type="submit" class="submit-edit">Edit To-Do</button>
+        </form>
 
-      <form class="edit-todo hide" type="submit" >
-        <label for="title">Title</label>
-        <input type="text" name="title" id="title" required>
-        
-        <label for="description">Description</label>
-        <textarea name="description" id="description" rows="5"></textarea>
-        
-        <label for="deadline">Deadline</label>
-        <input type="date" id="deadline" name="deadline">
-        
-        <button type="submit" class="submit-edit">Edit To-Do</button>
-      </form>
-
-
-      <div class="entry-container">
-        
-
-        
-        
-      </div>
-    </main>
-
-  </div>
-</body>
-
+        <div class="entry-container"></div>
+      </main>
+    </div>
+  </body>
 </html>
