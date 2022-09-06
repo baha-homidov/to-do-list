@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 /* eslint-disable no-use-before-define */
 /* eslint-disable import/no-cycle */
 /* eslint-disable import/no-duplicates */
@@ -12,6 +13,7 @@ import {
   collection,
   addDoc,
   getDoc,
+  getDocs,
   setDoc,
 } from "firebase/firestore";
 // required libraries for firestore auth
@@ -99,7 +101,10 @@ initFireBaseAuth();
 
 async function addFolder(userToken, folderName) {
   try {
-    await setDoc(doc(db, "users", userToken, "folders", folderName, "taskList", "SKIP"), {});
+    await setDoc(
+      doc(db, "users", userToken, "folders", folderName, "taskList", "SKIP"),
+      {}
+    );
     console.log(`Folder ${folderName} added successfully`);
   } catch (e) {
     console.log(`Error adding folder: ${e}`);
@@ -115,16 +120,18 @@ async function initUser(userToken) {
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
       console.log(`user ${userToken} already exists`);
+      initUserData();
       return;
     }
 
     // if user doesn't exist add a new user
     await setDoc(doc(db, "users", userToken), {});
-    addFolder(userToken, "Inbox");
-    addFolder(userToken, "Urgent");
-    addFolder(userToken, "Someday");
-    addFolder(userToken, "Logbook");
-    addFolder(userToken, "Trash");
+    await addFolder(userToken, "Inbox");
+    await addFolder(userToken, "Urgent");
+    await addFolder(userToken, "Someday");
+    await addFolder(userToken, "Logbook");
+    await addFolder(userToken, "Trash");
+    initUserData();
     console.log("user added successfully");
   } catch (e) {
     console.log("Error: ", e);
@@ -133,16 +140,32 @@ async function initUser(userToken) {
 
 async function addTask(folderName, task) {
   try {
-    const docRef = await addDoc(collection(db, "users", userUID, "folders", folderName, "taskList"), task);
+    const docRef = await addDoc(
+      collection(db, "users", userUID, "folders", folderName, "taskList"),
+      task
+    );
     console.log("Document written with ID: ", docRef.id);
+    return docRef.id;
   } catch (error) {
     console.log(`addTask error: ${error}`);
   }
-
 }
 
+async function initUserData() {
+  try {
+    console.log(userUID);
+    const querySnapshot = await getDocs(
+      collection(db, "users", userUID, "folders", "Inbox", "taskList")
+    );
+    console.log(querySnapshot.size);
 
-
+    querySnapshot.forEach((entryDocument) => {
+      console.log(entryDocument);
+    });
+  } catch (e) {
+    console(`initUserData() error: ${e}`);
+  }
+}
 
 export { signInUser, signOutUser, db, addTask };
 

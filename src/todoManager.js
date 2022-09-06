@@ -1,9 +1,19 @@
+/* eslint-disable import/no-cycle */
+/* eslint-disable no-param-reassign */
+import { addTask } from "./firebaseBackend";
 
 const todoManager = (function todoManager() {
   const todoArray = [];
-  // let folderArray = new Array();
 
-  function addTodo(todo) {
+  const userFolderList = []; // folders except "Inbox", "Urgent", "Someday"
+
+  async function addTodo(todo) {
+    // add an entry to Firebase and retrieve newly generated ID
+    todo.id = await addTask(todo.priority, {
+      title: todo.title,
+      description: todo.description,
+      deadline: todo.deadline,
+    });
     console.log(todo);
     todoArray.push(todo);
   }

@@ -49,6 +49,7 @@ function updateMenuItemEvents() {
 }
 
 function updateCanvas(folder) {
+  console.log("update canvas");
   const todoArray = todoManager.getTodoArray();
   clearCanvas();
   // eslint-disable-next-line no-plusplus
@@ -95,7 +96,6 @@ function switchToFolder(folder) {
 }
 
 function init() {
-
   document.querySelector("#test").addEventListener("click", () => {
     console.log("Click");
     addTask("Inbox", {
@@ -103,7 +103,7 @@ function init() {
       description: "Some description",
       deadline: "22-02-2023",
     });
-  })
+  });
 
   updateMenuItemEvents();
 
@@ -113,8 +113,6 @@ function init() {
   signOutButton.addEventListener("click", () => {
     signOutUser();
   });
-
-
 
   menuToggle.addEventListener("click", () => {
     menuToggle.classList.toggle("is-active");
@@ -134,8 +132,10 @@ function init() {
       currentFolder,
       deadline.value
     );
-    todoManager.addTodo(newTodo);
-    updateCanvas(currentFolder);
+    todoManager.addTodo(newTodo).then(() => { // wait for the async todoManager.addTodo() finish and update canvas
+      updateCanvas(currentFolder);
+    });
+    // updateCanvas(currentFolder);
     submitForm.reset();
     submitForm.classList.toggle("hide");
   });
@@ -345,7 +345,6 @@ function showSignOutbutton() {
 function refreshUi() {
   switchToFolder("Inbox");
 }
-
 
 export {
   updateGreeting,
