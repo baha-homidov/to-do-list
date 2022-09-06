@@ -32,7 +32,6 @@ import {
   showSignOutbutton,
   hideSignOutButton,
 } from "./uiManager";
-import ca from "date-fns/esm/locale/ca/index.js";
 
 // My web app's Firebase configuration
 const firebaseConfig = {
@@ -47,7 +46,7 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-
+let userUID = "";
 async function signInUser() {
   // Sign in Firebase using popup auth and Google as the identity provider.
   const provider = new GoogleAuthProvider();
@@ -79,7 +78,8 @@ function authStateObserver(user) {
     showGreeting();
     hideSignInButton();
     showSignOutbutton();
-    refreshUi();
+    const auth = getAuth();
+    userUID = auth.currentUser.uid;
   } else {
     // User is signed out!
     updateGreeting("");
@@ -99,7 +99,7 @@ initFireBaseAuth();
 
 async function addFolder(userToken, folderName) {
   try {
-    await setDoc(doc(db, "users", userToken, "folders", folderName), {});
+    await setDoc(doc(db, "users", userToken, "folders", folderName, "taskList", "SKIP"), {});
     console.log(`Folder ${folderName} added successfully`);
   } catch (e) {
     console.log(`Error adding folder: ${e}`);
@@ -131,7 +131,20 @@ async function initUser(userToken) {
   }
 }
 
-export { signInUser, signOutUser, db };
+async function addTask(folderName, task) {
+  try {
+    const docRef = await addDoc(collection(db, "users", userUID, "folders", folderName, "taskList"), task);
+    console.log("Document written with ID: ", docRef.id);
+  } catch (error) {
+    console.log(`addTask error: ${error}`);
+  }
+
+}
+
+
+
+
+export { signInUser, signOutUser, db, addTask };
 
 // async function addData() {
 //   try {

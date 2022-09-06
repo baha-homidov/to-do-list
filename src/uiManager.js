@@ -5,7 +5,7 @@
 import { format, parseISO } from "date-fns";
 import todoManager from "./todoManager";
 import todoEntry from "./todoClass";
-import { signInUser, signOutUser } from "./firebaseBackend";
+import { addTask, signInUser, signOutUser } from "./firebaseBackend";
 
 // cache Dom
 const menuToggle = document.querySelector(".menu-toggle");
@@ -95,6 +95,16 @@ function switchToFolder(folder) {
 }
 
 function init() {
+
+  document.querySelector("#test").addEventListener("click", () => {
+    console.log("Click");
+    addTask("Inbox", {
+      title: "Do something",
+      description: "Some description",
+      deadline: "22-02-2023",
+    });
+  })
+
   updateMenuItemEvents();
 
   signInButton.addEventListener("click", () => {
