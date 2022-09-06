@@ -23,6 +23,7 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   signOut,
+  createUserWithEmailAndPassword,
 } from "firebase/auth";
 import {
   updateGreeting,
@@ -34,6 +35,10 @@ import {
   showSignOutbutton,
   hideSignOutButton,
 } from "./uiManager";
+
+
+import todoEntry from "./todoClass";
+import todoManager from "./todoManager";
 
 // My web app's Firebase configuration
 const firebaseConfig = {
@@ -49,6 +54,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 let userUID = "";
+
 async function signInUser() {
   // Sign in Firebase using popup auth and Google as the identity provider.
   const provider = new GoogleAuthProvider();
@@ -58,6 +64,7 @@ async function signInUser() {
   const auth = getAuth();
   const user = auth.currentUser;
   initUser(user.uid);
+  initUserData();
 }
 
 function signOutUser() {
@@ -101,15 +108,19 @@ initFireBaseAuth();
 
 async function addFolder(userToken, folderName) {
   try {
-    await setDoc(
-      doc(db, "users", userToken, "folders", folderName, "taskList", "SKIP"),
-      {}
+    const docRef = await addDoc(
+      collection(db, "users", userToken, "folderCollection"),
+      {
+        folderName,
+      }
     );
-    console.log(`Folder ${folderName} added successfully`);
+    console.log("Document written with ID: ", docRef.id);
   } catch (e) {
     console.log(`Error adding folder: ${e}`);
   }
 }
+
+
 
 async function initUser(userToken) {
   // add an entry for a new user and initialize default folders
@@ -120,9 +131,16 @@ async function initUser(userToken) {
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
       console.log(`user ${userToken} already exists`);
-      initUserData();
       return;
     }
+
+    const Doc = await addDoc(
+      collection(db, "users", userToken, "taskCollection"),
+      {
+        skip: true
+      }
+    );
+    console.log("Document written with ID: ", Doc.id);
 
     // if user doesn't exist add a new user
     await setDoc(doc(db, "users", userToken), {});
@@ -131,17 +149,17 @@ async function initUser(userToken) {
     await addFolder(userToken, "Someday");
     await addFolder(userToken, "Logbook");
     await addFolder(userToken, "Trash");
-    initUserData();
+    
     console.log("user added successfully");
   } catch (e) {
     console.log("Error: ", e);
   }
 }
 
-async function addTask(folderName, task) {
+async function addTask(task) {
   try {
     const docRef = await addDoc(
-      collection(db, "users", userUID, "folders", folderName, "taskList"),
+      collection(db, "users", userUID, "taskCollection"),
       task
     );
     console.log("Document written with ID: ", docRef.id);
@@ -155,15 +173,22 @@ async function initUserData() {
   try {
     console.log(userUID);
     const querySnapshot = await getDocs(
-      collection(db, "users", userUID, "folders", "Inbox", "taskList")
+      collection(db, "users", userUID, "taskCollection")
     );
     console.log(querySnapshot.size);
-
+    const todoArray = [];
     querySnapshot.forEach((entryDocument) => {
-      console.log(entryDocument);
+      const entryObj = entryDocument.data();
+      if (entryObj.skip !== true) {
+        // eslint-disable-next-line new-cap
+        const newTodo = new todoEntry(entryObj.title, entryObj.description, entryObj.priority, entryObj.deadline, entryDocument.id);
+        todoArray.push(newTodo);
+        todoManager.setTodoArray(todoArray);
+        refreshUi();
+      }
     });
   } catch (e) {
-    console(`initUserData() error: ${e}`);
+    console.log(`initUserData() error: ${e}`);
   }
 }
 

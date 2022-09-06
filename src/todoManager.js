@@ -3,16 +3,17 @@
 import { addTask } from "./firebaseBackend";
 
 const todoManager = (function todoManager() {
-  const todoArray = [];
+  let todoArray = [];
 
   const userFolderList = []; // folders except "Inbox", "Urgent", "Someday"
 
   async function addTodo(todo) {
     // add an entry to Firebase and retrieve newly generated ID
-    todo.id = await addTask(todo.priority, {
+    todo.id = await addTask({
       title: todo.title,
       description: todo.description,
       deadline: todo.deadline,
+      priority: todo.priority,
     });
     console.log(todo);
     todoArray.push(todo);
@@ -34,7 +35,11 @@ const todoManager = (function todoManager() {
     return todoArray;
   }
 
-  return { addTodo, getTodo, getTodoArray, changeFolder, editTodo };
+  function setTodoArray(newTodoArray) {
+    todoArray = newTodoArray;
+  }
+
+  return { addTodo, getTodo, getTodoArray, setTodoArray, changeFolder, editTodo };
 })();
 
 export default todoManager;
