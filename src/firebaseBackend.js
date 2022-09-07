@@ -64,7 +64,7 @@ async function signInUser() {
   const auth = getAuth();
   const user = auth.currentUser;
   initUser(user.uid);
-  initUserData();
+  updateDataFromBackend();
 }
 
 function signOutUser() {
@@ -81,7 +81,7 @@ function getUsername() {
 function authStateObserver(user) {
   if (user) {
     // User is signed in!
-
+    
     const username = getUsername();
     updateGreeting(username);
     showGreeting();
@@ -89,6 +89,7 @@ function authStateObserver(user) {
     showSignOutbutton();
     const auth = getAuth();
     userUID = auth.currentUser.uid;
+    updateDataFromBackend();
   } else {
     // User is signed out!
     updateGreeting("");
@@ -169,13 +170,13 @@ async function addTask(task) {
   }
 }
 
-async function initUserData() {
+async function updateDataFromBackend() {
   try {
     console.log(userUID);
     const querySnapshot = await getDocs(
       collection(db, "users", userUID, "taskCollection")
     );
-    console.log(querySnapshot.size);
+
     const todoArray = [];
     querySnapshot.forEach((entryDocument) => {
       const entryObj = entryDocument.data();
@@ -191,6 +192,9 @@ async function initUserData() {
     console.log(`initUserData() error: ${e}`);
   }
 }
+
+
+
 
 export { signInUser, signOutUser, db, addTask };
 
