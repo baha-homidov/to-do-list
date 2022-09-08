@@ -7,7 +7,6 @@
   </head>
 
   <body>
-    <button id="test">Test button</button>
     <script defer src="bundle.js"></script>
 
     <div class="app">
@@ -41,6 +40,7 @@
             <img src="assets/icons/add.svg" alt="" /> Add Folder
           </button>
           <form class="add-folder" type="submit">
+            <div class="folder-error hide">Folder already exists</div>
             <input
               type="text"
               name="folder-name"
