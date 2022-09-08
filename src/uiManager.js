@@ -5,7 +5,7 @@
 import { format, parseISO } from "date-fns";
 import todoManager from "./todoManager";
 import todoEntry from "./todoClass";
-import { addTask, signInUser, signOutUser } from "./firebaseBackend";
+import { signInUser, signOutUser } from "./firebaseBackend";
 
 // cache Dom
 const menuToggle = document.querySelector(".menu-toggle");
@@ -15,6 +15,7 @@ const entryContainer = document.querySelector("div.entry-container");
 const addTodoButton = document.querySelector("button.add-button");
 const addFolderButton = document.querySelector("button.add-folder");
 const addFolderText = document.querySelector("#folder-name");
+const folderErrorText = document.querySelector(".folder-error");
 const addFolderForm = document.querySelector("form.add-folder");
 const submitFolderForm = document.querySelector("form.add-folder");
 const submitForm = document.querySelector("form.add-todo");
@@ -24,7 +25,7 @@ const editFormDescription = document.querySelector(
   "form.edit-todo>#description"
 );
 const editFormDeadline = document.querySelector("form.edit-todo>#deadline");
-let editIndex;
+let editId;
 
 const title = document.querySelector("input#title");
 const description = document.querySelector("textarea#description");
@@ -55,7 +56,7 @@ function updateCanvas(folder) {
   // eslint-disable-next-line no-plusplus
   for (let i = 0; i < todoArray.length; i++) {
     if (todoArray[i].priority === folder) {
-      addToDo(todoArray[i], i);
+      addToDo(todoArray[i], todoArray[i].id);
     }
   }
 }
@@ -95,16 +96,16 @@ function switchToFolder(folder) {
   });
 }
 
-function init() {
-  document.querySelector("#test").addEventListener("click", () => {
-    console.log("Click");
-    addTask("Inbox", {
-      title: "Do something",
-      description: "Some description",
-      deadline: "22-02-2023",
-    });
-  });
+function showFolderError(folderName) {
+  folderErrorText.textContent = `${folderName} already exists.`
+  folderErrorText.classList.remove("hide");
+}
 
+function hideFolderError() {
+  folderErrorText.classList.add("hide");
+}
+
+function init() {
   updateMenuItemEvents();
 
   signInButton.addEventListener("click", () => {
@@ -132,7 +133,8 @@ function init() {
       currentFolder,
       deadline.value
     );
-    todoManager.addTodo(newTodo).then(() => { // wait for the async todoManager.addTodo() finish and update canvas
+    todoManager.addTodo(newTodo).then(() => {
+      // wait for the async todoManager.addTodo() finish and update canvas
       updateCanvas(currentFolder);
     });
     // updateCanvas(currentFolder);
@@ -148,7 +150,7 @@ function init() {
       currentFolder,
       editFormDeadline.value
     );
-    todoManager.editTodo(newTodo, editIndex);
+    todoManager.editTodo(newTodo, editId);
     updateCanvas(currentFolder);
     editForm.reset();
     editForm.classList.toggle("hide");
@@ -157,16 +159,26 @@ function init() {
 
   submitFolderForm.addEventListener("submit", (event) => {
     event.preventDefault(); // stop page from refreshing
+    // check if folder already exists
+    const folderName = addFolderText.value;
+    if (todoManager.folderExists(folderName)) {
+      showFolderError(folderName);
+      return;
+    }
     const newFolder = createElement("button", "menu-item");
-    newFolder.setAttribute("folder", addFolderText.value);
+    newFolder.setAttribute("folder", folderName);
+    todoManager.addFolder(folderName);
+    // add folder to todoManager
+
     const icon = createElement("img");
     icon.src = "assets/icons/folder.svg";
     newFolder.appendChild(icon);
-    newFolder.appendChild(document.createTextNode(addFolderText.value));
+    newFolder.appendChild(document.createTextNode(folderName));
 
     menu.insertBefore(newFolder, addFolderButton);
     submitFolderForm.reset();
     submitFolderForm.classList.toggle("hide");
+    hideFolderError();
     updateMenuItemEvents();
   });
 
@@ -175,6 +187,27 @@ function init() {
   });
 }
 init();
+
+function displayUserFolders() {
+  // retrieve folderList from todoManager and add them to DOM
+
+  const userFolderList = todoManager.getUserFolderArray();
+  console.log(userFolderList);
+  userFolderList.forEach((folderName) => {
+    const newFolder = createElement("button", "menu-item");
+    newFolder.setAttribute("folder", folderName);
+
+    const icon = createElement("img");
+    icon.src = "assets/icons/folder.svg";
+    newFolder.appendChild(icon);
+    newFolder.appendChild(document.createTextNode(folderName));
+
+    menu.insertBefore(newFolder, addFolderButton);
+    submitFolderForm.reset();
+    submitFolderForm.classList.toggle("hide");
+    updateMenuItemEvents();
+  });
+}
 
 function clearCanvas() {
   // eslint-disable-next-line no-shadow
@@ -193,17 +226,17 @@ function createElement(type, className, textContent) {
   return element;
 }
 
-function makeEntryElem(todo, index) {
+function makeEntryElem(todo, id) {
   const entryElem = createElement("div", "list-entry");
   entryElem.classList.add("target");
-  entryElem.setAttribute("array-index", index);
+  entryElem.setAttribute("firestore-id", id);
 
   const checkButton = createElement("button", "check-button");
   const buttonImg = document.createElement("img");
   buttonImg.src = "assets/icons/check_box.svg";
   checkButton.appendChild(buttonImg);
   checkButton.addEventListener("click", (event) => {
-    todoManager.changeFolder("Logbook", index);
+    todoManager.changeFolder("Logbook", id);
     updateCanvas(currentFolder);
     event.stopImmediatePropagation();
   });
@@ -245,7 +278,7 @@ function makeEntryElem(todo, index) {
 
     // eslint-disable-next-line no-shadow
     checkButton.addEventListener("click", (event) => {
-      todoManager.changeFolder("Logbook", index);
+      todoManager.changeFolder("Logbook", id);
       updateCanvas(currentFolder);
       event.stopImmediatePropagation();
     });
@@ -259,7 +292,7 @@ function makeEntryElem(todo, index) {
       editFormDescription.value = todo.description;
       console.log(todo.deadline);
       editFormDeadline.value = todo.deadline;
-      editIndex = index;
+      editId = id;
     });
     buttons.appendChild(editButton);
 
@@ -269,7 +302,7 @@ function makeEntryElem(todo, index) {
       "Delete To-Do"
     );
     deleteButton.addEventListener("click", (event) => {
-      todoManager.changeFolder("Trash", index);
+      todoManager.changeFolder("Trash", id);
       updateCanvas(currentFolder);
 
       event.stopImmediatePropagation();
@@ -291,7 +324,7 @@ function makeEntryElem(todo, index) {
     const checkButton = createElement("button", "check-button");
 
     checkButton.addEventListener("click", (event) => {
-      todoManager.changeFolder("Logbook", index);
+      todoManager.changeFolder("Logbook", id);
       updateCanvas(currentFolder);
       event.stopImmediatePropagation();
     });
@@ -306,8 +339,8 @@ function makeEntryElem(todo, index) {
   return entryElem;
 }
 
-function addToDo(todo, index) {
-  entryContainer.appendChild(makeEntryElem(todo, index));
+function addToDo(todo, id) {
+  entryContainer.appendChild(makeEntryElem(todo, id));
 }
 
 function updateGreeting(username) {
@@ -355,4 +388,5 @@ export {
   hideGreeting,
   showGreeting,
   refreshUi,
+  displayUserFolders,
 };

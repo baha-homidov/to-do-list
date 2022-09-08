@@ -15,6 +15,9 @@ import {
   getDoc,
   getDocs,
   setDoc,
+  serverTimestamp,
+  orderBy,
+  query,
 } from "firebase/firestore";
 // required libraries for firestore auth
 import {
@@ -23,7 +26,7 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   signOut,
-  createUserWithEmailAndPassword,
+
 } from "firebase/auth";
 import {
   updateGreeting,
@@ -34,8 +37,8 @@ import {
   refreshUi,
   showSignOutbutton,
   hideSignOutButton,
+  displayUserFolders,
 } from "./uiManager";
-
 
 import todoEntry from "./todoClass";
 import todoManager from "./todoManager";
@@ -81,7 +84,7 @@ function getUsername() {
 function authStateObserver(user) {
   if (user) {
     // User is signed in!
-    
+
     const username = getUsername();
     updateGreeting(username);
     showGreeting();
@@ -107,12 +110,14 @@ function initFireBaseAuth() {
 
 initFireBaseAuth();
 
-async function addFolder(userToken, folderName) {
+async function addFolder(userToken, folderName, customFolder) {
   try {
     const docRef = await addDoc(
       collection(db, "users", userToken, "folderCollection"),
       {
         folderName,
+        customFolder,
+        timestamp: serverTimestamp(),
       }
     );
     console.log("Document written with ID: ", docRef.id);
@@ -121,7 +126,22 @@ async function addFolder(userToken, folderName) {
   }
 }
 
-
+async function addCustomFolder(folderName) {
+  // function for adding custom folder for useage outside the module
+  try {
+    const docRef = await addDoc(
+      collection(db, "users", userUID, "folderCollection"),
+      {
+        folderName,
+        customFolder: true,
+        timestamp: serverTimestamp(),
+      }
+    );
+    console.log("Document written with ID: ", docRef.id);
+  } catch (e) {
+    console.log(`Error adding folder: ${e}`);
+  }
+}
 
 async function initUser(userToken) {
   // add an entry for a new user and initialize default folders
@@ -138,19 +158,19 @@ async function initUser(userToken) {
     const Doc = await addDoc(
       collection(db, "users", userToken, "taskCollection"),
       {
-        skip: true
+        skip: true,
       }
     );
     console.log("Document written with ID: ", Doc.id);
 
     // if user doesn't exist add a new user
     await setDoc(doc(db, "users", userToken), {});
-    await addFolder(userToken, "Inbox");
-    await addFolder(userToken, "Urgent");
-    await addFolder(userToken, "Someday");
-    await addFolder(userToken, "Logbook");
-    await addFolder(userToken, "Trash");
-    
+    await addFolder(userToken, "Inbox", false);
+    await addFolder(userToken, "Urgent", false);
+    await addFolder(userToken, "Someday", false);
+    await addFolder(userToken, "Logbook", false);
+    await addFolder(userToken, "Trash", false);
+
     console.log("user added successfully");
   } catch (e) {
     console.log("Error: ", e);
@@ -159,6 +179,8 @@ async function initUser(userToken) {
 
 async function addTask(task) {
   try {
+    // eslint-disable-next-line no-param-reassign
+    task.timestamp = serverTimestamp(); // add server timestamp to the task
     const docRef = await addDoc(
       collection(db, "users", userUID, "taskCollection"),
       task
@@ -172,41 +194,83 @@ async function addTask(task) {
 
 async function updateDataFromBackend() {
   try {
-    console.log(userUID);
-    const querySnapshot = await getDocs(
-      collection(db, "users", userUID, "taskCollection")
+    // get sorted list of tasks
+    const taskCollectionRef = collection(
+      db,
+      "users",
+      userUID,
+      "taskCollection"
+    );
+    const taskCollectionSnapshop = await getDocs(
+      query(taskCollectionRef, orderBy("timestamp"))
     );
 
     const todoArray = [];
-    querySnapshot.forEach((entryDocument) => {
+    taskCollectionSnapshop.forEach((entryDocument) => {
       const entryObj = entryDocument.data();
       if (entryObj.skip !== true) {
         // eslint-disable-next-line new-cap
-        const newTodo = new todoEntry(entryObj.title, entryObj.description, entryObj.priority, entryObj.deadline, entryDocument.id);
+        const newTodo = new todoEntry(
+          entryObj.title,
+          entryObj.description,
+          entryObj.priority,
+          entryObj.deadline,
+          entryDocument.id
+        );
         todoArray.push(newTodo);
-        todoManager.setTodoArray(todoArray);
-        refreshUi();
       }
     });
+
+    // get sorted list of user-made folders
+    const folderCollectionRef = collection(
+      db,
+      "users",
+      userUID,
+      "folderCollection"
+    );
+    const folderCollectionRefSnapshot = await getDocs(
+      query(folderCollectionRef, orderBy("timestamp"))
+    );
+
+    const folderArray = [];
+    folderCollectionRefSnapshot.forEach((entryDocument) => {
+      const folderObj = entryDocument.data();
+      if (folderObj.customFolder === true) {
+        folderArray.push(folderObj.folderName);
+      }
+    });
+    console.log(folderArray);
+    todoManager.setTodoArray(todoArray);
+    todoManager.setUserFolderArray(folderArray);
+    refreshUi();
+    displayUserFolders();
   } catch (e) {
     console.log(`initUserData() error: ${e}`);
   }
 }
 
+async function changeTaskFolder(taskId, newFolder) {
+  try {
+    const taskRef = doc(db, "users", userUID, "taskCollection", taskId);
+    setDoc(taskRef, { priority: newFolder }, { merge: true });
+  } catch (e) {
+    console.log(`changeTaskFolderError: ${e}`);
+  }
+}
 
+async function editTask(newTask, taskId) {
+  try {
+    const taskRef = doc(db, "users", userUID, "taskCollection", taskId);
+    
+    // retrieve timestamp and assign to the newTask
+    const taskSnap = await getDoc(taskRef);
+    // eslint-disable-next-line no-param-reassign
+    newTask.timestamp = taskSnap.data().timestamp;
 
+    setDoc(taskRef, newTask);
+  } catch (e) {
+    console.log(`changeTaskFolderError: ${e}`);
+  }
+}
 
-export { signInUser, signOutUser, db, addTask };
-
-// async function addData() {
-//   try {
-//     const docRef = await addDoc(collection(db, "users"), {
-//       first: "Ada",
-//       last: "Lovelace",
-//       born: 1815,
-//     });
-//     console.log("Document written with ID: ", docRef.id);
-//   } catch (e) {
-//     console.error("Error adding document: ", e);
-//   }
-// }
+export { signInUser, signOutUser, db, addTask, addCustomFolder, changeTaskFolder, editTask };

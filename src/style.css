@@ -41,6 +41,13 @@ body {
   flex-direction: column;
 }
 
+.folder-error {
+    font-size: 1rem;
+    position: absolute;
+    color: red;
+    transform: translate(3px, -190%);
+}
+
 .menu-item,
 .add-folder {
   display: flex;
