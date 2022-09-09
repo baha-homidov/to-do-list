@@ -14,6 +14,7 @@ const menu = document.querySelector("nav.menu");
 const entryContainer = document.querySelector("div.entry-container");
 const addTodoButton = document.querySelector("button.add-button");
 const addFolderButton = document.querySelector("button.add-folder");
+const deleteFolderButton = document.querySelector("button.delete-folder");
 const addFolderText = document.querySelector("#folder-name");
 const folderErrorText = document.querySelector(".folder-error");
 const addFolderForm = document.querySelector("form.add-folder");
@@ -51,7 +52,6 @@ function updateMenuItemEvents() {
 }
 
 function updateCanvas(folder) {
-  console.log("update canvas");
   const todoArray = todoManager.getTodoArray();
   clearCanvas();
   // eslint-disable-next-line no-plusplus
@@ -63,6 +63,7 @@ function updateCanvas(folder) {
 }
 
 function switchToFolder(folder) {
+
   let iconPath;
   currentFolder = folder;
   switch (folder) {
@@ -85,6 +86,21 @@ function switchToFolder(folder) {
       iconPath = "assets/icons/folder_big.svg";
       break;
   }
+
+  // set deleteFolderButton's visibility
+  if (
+    folder === "Inbox" ||
+    folder === "Urgent" ||
+    folder === "Someday" ||
+    folder === "Logbook" ||
+    folder === "Trash"
+  ) {
+    deleteFolderButton.classList.add("hide");
+  } else {
+    deleteFolderButton.classList.remove("hide");
+  }
+
+
   pageTitle.textContent = folder;
   pageTitleIcon.src = iconPath;
   updateCanvas(folder);
@@ -98,7 +114,7 @@ function switchToFolder(folder) {
 }
 
 function showFolderError(folderName) {
-  folderErrorText.textContent = `${folderName} already exists.`
+  folderErrorText.textContent = `${folderName} already exists.`;
   folderErrorText.classList.remove("hide");
 }
 
@@ -115,6 +131,13 @@ function init() {
   signOutButton.addEventListener("click", () => {
     signOutUser();
   });
+
+  deleteFolderButton.addEventListener("click", () => {
+    todoManager.deleteFolder(currentFolder);
+    const folderMenuEntry = document.querySelector(`[folder='${currentFolder}']`);
+    folderMenuEntry.remove();
+    switchToFolder("Inbox");
+  })
 
   menuToggle.addEventListener("click", () => {
     menuToggle.classList.toggle("is-active");
@@ -191,13 +214,13 @@ init();
 
 function displayUserFolders() {
   // retrieve folderList from todoManager and add them to DOM
+  console.log("displayUserFolders()");
 
   const userFolderList = todoManager.getUserFolderArray();
   console.log(userFolderList);
   userFolderList.forEach((folderName) => {
     const newFolder = createElement("button", "menu-item");
     newFolder.setAttribute("folder", folderName);
-
     const icon = createElement("img");
     icon.src = "assets/icons/folder.svg";
     newFolder.appendChild(icon);
@@ -377,15 +400,18 @@ function showSignOutbutton() {
 }
 
 function refreshUi() {
+
   switchToFolder("Inbox");
 }
 
 function showWelcomeContainer() {
   welcomeContainer.classList.remove("hide");
+  menu.classList.add("hide");
 }
 
 function hideWelcomeContainer() {
   welcomeContainer.classList.add("hide");
+  menu.classList.remove("hide");
 }
 
 export {
@@ -399,5 +425,5 @@ export {
   refreshUi,
   displayUserFolders,
   hideWelcomeContainer,
-  showWelcomeContainer
+  showWelcomeContainer,
 };

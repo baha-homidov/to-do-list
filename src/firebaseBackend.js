@@ -19,7 +19,7 @@ import {
   orderBy,
   query,
 } from "firebase/firestore";
-// required libraries for firestore auth
+// required libraries for firestore divide
 import {
   getAuth,
   onAuthStateChanged,
@@ -65,11 +65,9 @@ async function signInUser() {
   const provider = new GoogleAuthProvider();
   await signInWithPopup(getAuth(), provider);
   // eslint-disable-next-line no-restricted-globals
-  refreshUi();
   const auth = getAuth();
   const user = auth.currentUser;
   initUser(user.uid);
-  updateDataFromBackend();
 }
 
 function signOutUser() {
@@ -96,13 +94,14 @@ function authStateObserver(user) {
     const auth = getAuth();
     userUID = auth.currentUser.uid;
     updateDataFromBackend();
+
   } else {
     // User is signed out!
     updateGreeting("");
     showSignInbutton();
     hideGreeting();
     hideSignOutButton();
-    refreshUi();
+
     showWelcomeContainer();
   }
 }
@@ -131,6 +130,23 @@ async function addFolder(userToken, folderName, customFolder) {
 }
 
 async function addCustomFolder(folderName) {
+  // function for adding custom folder for useage outside the module
+  try {
+    const docRef = await addDoc(
+      collection(db, "users", userUID, "folderCollection"),
+      {
+        folderName,
+        customFolder: true,
+        timestamp: serverTimestamp(),
+      }
+    );
+    console.log("Document written with ID: ", docRef.id);
+  } catch (e) {
+    console.log(`Error adding folder: ${e}`);
+  }
+}
+
+async function deleteCustomFolder(folderName) {
   // function for adding custom folder for useage outside the module
   try {
     const docRef = await addDoc(
@@ -253,6 +269,7 @@ async function updateDataFromBackend() {
   }
 }
 
+// changes a task's folder to 'newFolder' with a given 'taskId'
 async function changeTaskFolder(taskId, newFolder) {
   try {
     const taskRef = doc(db, "users", userUID, "taskCollection", taskId);

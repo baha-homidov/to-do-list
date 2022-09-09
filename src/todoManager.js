@@ -76,7 +76,6 @@ const todoManager = (function todoManager() {
   }
 
   function folderExists(folderName) {
-    
     return (
       userFolderArray.includes(folderName) ||
       folderName === "Inbox" ||
@@ -85,6 +84,21 @@ const todoManager = (function todoManager() {
       folderName === "Logbook" ||
       folderName === "Trash"
     );
+  }
+
+  async function deleteFolder(folderName) {
+    console.log(`Delete ${folderName}`);
+    todoArray.forEach((element) => { // move all elements from current folder to trash
+      if (element.priority === folderName) {
+        element.priority = "Trash";
+        changeTaskFolder(element.id, "Trash");
+      }
+    })
+    userFolderArray = userFolderArray.filter(
+      (element) => element !== folderName
+    );
+
+    
   }
 
   return {
@@ -97,7 +111,8 @@ const todoManager = (function todoManager() {
     changeFolder,
     editTodo,
     addFolder,
-    folderExists
+    deleteFolder,
+    folderExists,
   };
 })();
 
