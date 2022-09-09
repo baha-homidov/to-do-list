@@ -35,6 +35,7 @@ const pageTitleIcon = document.querySelector(".title > .icon");
 const signInButton = document.querySelector("button.sign-in");
 const signOutButton = document.querySelector("button.sign-out");
 const usernameGreeting = document.querySelector("h2.greeting");
+const welcomeContainer = document.querySelector("div.welcome-container");
 let menuItems = document.querySelectorAll("button.menu-item");
 
 let currentFolder = "Inbox";
@@ -379,6 +380,14 @@ function refreshUi() {
   switchToFolder("Inbox");
 }
 
+function showWelcomeContainer() {
+  welcomeContainer.classList.remove("hide");
+}
+
+function hideWelcomeContainer() {
+  welcomeContainer.classList.add("hide");
+}
+
 export {
   updateGreeting,
   hideSignInButton,
@@ -389,4 +398,6 @@ export {
   showGreeting,
   refreshUi,
   displayUserFolders,
+  hideWelcomeContainer,
+  showWelcomeContainer
 };

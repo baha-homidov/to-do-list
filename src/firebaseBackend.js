@@ -38,6 +38,8 @@ import {
   showSignOutbutton,
   hideSignOutButton,
   displayUserFolders,
+  hideWelcomeContainer,
+  showWelcomeContainer,
 } from "./uiManager";
 
 import todoEntry from "./todoClass";
@@ -85,6 +87,7 @@ function authStateObserver(user) {
   if (user) {
     // User is signed in!
 
+    hideWelcomeContainer();
     const username = getUsername();
     updateGreeting(username);
     showGreeting();
@@ -100,6 +103,7 @@ function authStateObserver(user) {
     hideGreeting();
     hideSignOutButton();
     refreshUi();
+    showWelcomeContainer();
   }
 }
 
