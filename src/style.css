@@ -24,12 +24,12 @@ body {
 .welcome-img {
   margin-top: min(20vh, 100px) ;
   width: min(300px, 60vw);
-  border: 1px solid red;
+
 }
 
 h1.sign-in-text {
 text-align: center;
-  border: 1px solid red;
+
   font-size: 1.5rem;
 }
 
