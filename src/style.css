@@ -9,6 +9,30 @@ body {
   min-width: 370px;
 }
 
+.welcome-container {
+  background-color: white;
+  z-index: 3;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+  min-height: 100vh;
+  min-width: 100vw;
+}
+
+.welcome-img {
+  margin-top: min(20vh, 100px) ;
+  width: min(300px, 60vw);
+  border: 1px solid red;
+}
+
+h1.sign-in-text {
+text-align: center;
+  border: 1px solid red;
+  font-size: 1.5rem;
+}
+
 .app {
   display: flex;
   min-height: 100vh;
@@ -17,7 +41,7 @@ body {
 .sidebar {
   flex: 1 1 0;
   max-width: 300px;
-  padding:1rem 1rem;
+  padding: 1rem 1rem;
   background-color: #2e3047;
 }
 .greeting {
@@ -30,8 +54,8 @@ body {
   margin-bottom: 0.5em;
 }
 .small-icon {
-    width: 24px;
-    height: auto;
+  width: 24px;
+  height: auto;
 }
 .sidebar .menu {
   margin: 0 -1rem;
@@ -42,10 +66,10 @@ body {
 }
 
 .folder-error {
-    font-size: 1rem;
-    position: absolute;
-    color: red;
-    transform: translate(3px, -190%);
+  font-size: 1rem;
+  position: absolute;
+  color: red;
+  transform: translate(3px, -190%);
 }
 
 .menu-item,
@@ -370,7 +394,7 @@ textarea {
 .menu-toggle {
   display: none;
   position: absolute;
-  z-index: 99;
+  z-index: 1;
   position: fixed;
   top: 2rem;
   right: 2rem;
@@ -426,7 +450,7 @@ textarea {
 }
 
 .sign-out {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 @media (max-width: 1024px) {
