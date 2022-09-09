@@ -4,6 +4,7 @@ import {
   addCustomFolder,
   addTask,
   changeTaskFolder,
+  deleteCustomFolder,
   editTask,
 } from "./firebaseBackend";
 
@@ -62,10 +63,20 @@ const todoManager = (function todoManager() {
   }
 
   function addFolder(folderName) {
-    userFolderArray.push(folderName);
     addCustomFolder(folderName);
-    console.log(userFolderArray);
+    userFolderArray.push({ name: folderName});
   }
+
+
+  // find folder and set it's Firestore Document ID
+  function setFolderId(folderName, folderId) {
+    userFolderArray.forEach((folderObj, index) => {
+      if (folderObj.name === folderName) {
+        userFolderArray[index].id = folderId;
+      }
+    })
+  }
+
 
   function getUserFolderArray() {
     return userFolderArray;
@@ -77,7 +88,13 @@ const todoManager = (function todoManager() {
 
   function folderExists(folderName) {
     return (
-      userFolderArray.includes(folderName) ||
+      (function arrayIncludes() {
+        // check if 'userFolderArray' includes a folder with a similar 'folderName'
+        for (let i = 0; i < userFolderArray.length; i += 1) {
+          if (userFolderArray[i].name === folderName) return true;
+        }
+        return false;
+      })() ||
       folderName === "Inbox" ||
       folderName === "Urgent" ||
       folderName === "Someday" ||
@@ -86,19 +103,19 @@ const todoManager = (function todoManager() {
     );
   }
 
-  async function deleteFolder(folderName) {
-    console.log(`Delete ${folderName}`);
-    todoArray.forEach((element) => { // move all elements from current folder to trash
+  function deleteFolder(folderName, folderId) {
+    console.log(`Delete ${userFolderArray}`);
+    todoArray.forEach((element) => {
+      // move all elements from current folder to trash
       if (element.priority === folderName) {
         element.priority = "Trash";
         changeTaskFolder(element.id, "Trash");
       }
-    })
+    });
     userFolderArray = userFolderArray.filter(
-      (element) => element !== folderName
+      (element) => element.name !== folderName
     );
-
-    
+    deleteCustomFolder(folderId)
   }
 
   return {
@@ -113,6 +130,7 @@ const todoManager = (function todoManager() {
     addFolder,
     deleteFolder,
     folderExists,
+    setFolderId
   };
 })();
 

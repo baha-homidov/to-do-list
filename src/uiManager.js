@@ -63,7 +63,6 @@ function updateCanvas(folder) {
 }
 
 function switchToFolder(folder) {
-
   let iconPath;
   currentFolder = folder;
   switch (folder) {
@@ -100,7 +99,6 @@ function switchToFolder(folder) {
     deleteFolderButton.classList.remove("hide");
   }
 
-
   pageTitle.textContent = folder;
   pageTitleIcon.src = iconPath;
   updateCanvas(folder);
@@ -133,11 +131,14 @@ function init() {
   });
 
   deleteFolderButton.addEventListener("click", () => {
-    todoManager.deleteFolder(currentFolder);
-    const folderMenuEntry = document.querySelector(`[folder='${currentFolder}']`);
+    const folderMenuEntry = document.querySelector(
+      `[folder='${currentFolder}']`
+    );
+    const folderId = folderMenuEntry.getAttribute("doc-id"); // get folder's Firestore Document ID for deleting from backed
+    todoManager.deleteFolder(currentFolder, folderId);
     folderMenuEntry.remove();
     switchToFolder("Inbox");
-  })
+  });
 
   menuToggle.addEventListener("click", () => {
     menuToggle.classList.toggle("is-active");
@@ -214,23 +215,28 @@ init();
 
 function displayUserFolders() {
   // retrieve folderList from todoManager and add them to DOM
-  console.log("displayUserFolders()");
 
   const userFolderList = todoManager.getUserFolderArray();
-  console.log(userFolderList);
-  userFolderList.forEach((folderName) => {
+
+  userFolderList.forEach((folderObj) => {
     const newFolder = createElement("button", "menu-item");
-    newFolder.setAttribute("folder", folderName);
+    newFolder.setAttribute("folder", folderObj.name);
+    newFolder.setAttribute("doc-id", folderObj.id);
     const icon = createElement("img");
     icon.src = "assets/icons/folder.svg";
     newFolder.appendChild(icon);
-    newFolder.appendChild(document.createTextNode(folderName));
-
+    newFolder.appendChild(document.createTextNode(folderObj.name));
     menu.insertBefore(newFolder, addFolderButton);
     submitFolderForm.reset();
     submitFolderForm.classList.toggle("hide");
     updateMenuItemEvents();
   });
+}
+
+function setFolderId(folderName, folderId) {
+  const folderElement = document.querySelector(`[folder='${folderName}']`);
+  folderElement.setAttribute("doc-id", folderId);
+  console.log(folderElement);
 }
 
 function clearCanvas() {
@@ -400,7 +406,6 @@ function showSignOutbutton() {
 }
 
 function refreshUi() {
-
   switchToFolder("Inbox");
 }
 
@@ -426,4 +431,5 @@ export {
   displayUserFolders,
   hideWelcomeContainer,
   showWelcomeContainer,
+  setFolderId,
 };

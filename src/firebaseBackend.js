@@ -18,6 +18,7 @@ import {
   serverTimestamp,
   orderBy,
   query,
+  deleteDoc,
 } from "firebase/firestore";
 // required libraries for firestore divide
 import {
@@ -26,7 +27,6 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   signOut,
-
 } from "firebase/auth";
 import {
   updateGreeting,
@@ -40,6 +40,7 @@ import {
   displayUserFolders,
   hideWelcomeContainer,
   showWelcomeContainer,
+  setFolderId,
 } from "./uiManager";
 
 import todoEntry from "./todoClass";
@@ -94,7 +95,6 @@ function authStateObserver(user) {
     const auth = getAuth();
     userUID = auth.currentUser.uid;
     updateDataFromBackend();
-
   } else {
     // User is signed out!
     updateGreeting("");
@@ -140,26 +140,20 @@ async function addCustomFolder(folderName) {
         timestamp: serverTimestamp(),
       }
     );
+    setFolderId(folderName, docRef.id);
+    todoManager.setFolderId(folderName, docRef.id);
     console.log("Document written with ID: ", docRef.id);
   } catch (e) {
     console.log(`Error adding folder: ${e}`);
   }
 }
 
-async function deleteCustomFolder(folderName) {
+async function deleteCustomFolder(folderId) {
   // function for adding custom folder for useage outside the module
   try {
-    const docRef = await addDoc(
-      collection(db, "users", userUID, "folderCollection"),
-      {
-        folderName,
-        customFolder: true,
-        timestamp: serverTimestamp(),
-      }
-    );
-    console.log("Document written with ID: ", docRef.id);
+    await deleteDoc(doc(db, "users", userUID, "folderCollection", folderId));
   } catch (e) {
-    console.log(`Error adding folder: ${e}`);
+    console.log(`Error deleting folder: ${e}`);
   }
 }
 
@@ -255,8 +249,12 @@ async function updateDataFromBackend() {
     const folderArray = [];
     folderCollectionRefSnapshot.forEach((entryDocument) => {
       const folderObj = entryDocument.data();
+      const folderId = entryDocument.id;
       if (folderObj.customFolder === true) {
-        folderArray.push(folderObj.folderName);
+        folderArray.push({
+          name: folderObj.folderName,
+          id: folderId,
+        });
       }
     });
     console.log(folderArray);
@@ -282,7 +280,7 @@ async function changeTaskFolder(taskId, newFolder) {
 async function editTask(newTask, taskId) {
   try {
     const taskRef = doc(db, "users", userUID, "taskCollection", taskId);
-    
+
     // retrieve timestamp and assign to the newTask
     const taskSnap = await getDoc(taskRef);
     // eslint-disable-next-line no-param-reassign
@@ -294,4 +292,13 @@ async function editTask(newTask, taskId) {
   }
 }
 
-export { signInUser, signOutUser, db, addTask, addCustomFolder, changeTaskFolder, editTask };
+export {
+  signInUser,
+  signOutUser,
+  db,
+  addTask,
+  addCustomFolder,
+  changeTaskFolder,
+  editTask,
+  deleteCustomFolder
+};
