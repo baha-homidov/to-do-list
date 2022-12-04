@@ -3,6 +3,9 @@
 Fully functional to-do list app with authentication system and Firebase as the backend for keeping user data. <br>
 Legend says - **_"No web developer portfolio is complete without a to-do list app."_**
 
+![Screen Shot 2022-12-04 at 13 15 03](https://user-images.githubusercontent.com/96972109/205477820-33d0d833-7a20-4301-8567-b869c13078a5.png)
+
+
 ### Access
 
 - The project is hosted on GitHub Pages and can be accessed by visiting this link [Gotta-Do List](https://baha-homidov.github.io/to-do-list/)
